@@ -19,7 +19,7 @@ const ScreenStack = StackNavigator(
     Home: { screen: IntroScreen },
     Tasks: { screen: TasksScreen }
   },
-  {
+  {//parametro para desactivar barra superior
     headerMode: 'none'
   }
 );
