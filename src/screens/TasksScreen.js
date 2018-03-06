@@ -1,39 +1,138 @@
 /*
-* TasksScreen
+*TaskScreen
 */
 import React, { Component } from 'react';
 import {
   View,
   Text,
   Image,
-  StyleSheet
+  StyleSheet,
+  ScrollView,
+  TouchableHighlight,
+  Modal
 } from 'react-native';
 
-import TasksHeader from './../components/TasksHeader';
-import Tareas from './../components/Tareas';
+import TaskHeader from './../components/TasksHeader';
+import Task from './../components/Tareas';
+import AddTaskModal from './../modals/AddTaskModal';
 
-export default class TasksScreen extends Component<Props>{
+export default class TasksScreen extends Component<props> {
 
-  constructor(props){
-    super(props);
-  }
-  render(){
-    return(
-      <View style={styles.container}>
-      <TasksHeader toBeComplete={28}/>
-      <View style={styles.tasksContainer}>
-      <Tareas renderTasks/>
-      </View>
-      </View>
-    )
-  }
-}
+    constructor(props){
+        super(props);
+        this.state = {
+          tasks: [
+            { id: 1, title:'Examen JJ', completed: false },
+            { id: 2, title:'Examen Pacheco', completed: false },
+            { id: 3, title:'Examen Ulises', completed: false },
+            { id: 4, title:'Programas Prolog', completed: false },
+            { id: 5, title:'App Invia', completed: false },
+            { id: 6, title:'App JJ', completed: false }
+          ],
+          visibleModal:false
+        }
+    }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  tasksContainer: {
-    flex: 1
+    showModal(){
+      this.setState({visibleModal: true})
+    }
+
+    hideModal(){
+      this.setState({visibleModal: false})
+    }
+
+    addTask(title){
+      //Obtener el valor del titulo
+      //Generar EL OBJETO{ID,TITULO,COMPLETED}
+      //Generar e ID QUE ES UNA MALA PRACTICA
+      //STEAR LA BANDERA DE COMPLETADO A FALSO POR default
+      const id = 100+ this.state.tasks.length;
+      const newTask ={id, title, completed:false};
+      //COPIAR EL ARREGLO TASK ORIGINAL
+      let tasks =[...this.state.tasks];
+      //MANDAR LA NUEVA TAREA A LA COPIA DEL ARREGLO
+      tasks.push(newTask);
+      //ACTUALZIAR EL ESTADO
+      this.setState({tasks});
+
+    }
+
+    updateTask(targeredId){
+      //Copiar estado
+      let currentTask =[...this.state.tasks];
+      //Verficar el id del que quiero cambiar
+      let taskToBeUpdated = currentTask.find( task => task.id === targeredId);
+      //checar en que estado estado
+      taskToBeUpdated.completed = !taskToBeUpdated.completed;
+      //actualizar estado
+      this.setState({tasks:currentTask});
+    }
+
+    calculateTaskToBeCompleted(){
+      let count = 0;
+      this.state.tasks.forEach(task =>{
+        if(!task.completed){
+          count++;
+        }
+      });
+      return count;
+    }
+
+    renderTask(){
+      return(
+        this.state.tasks.map((task)=>{
+            return(
+              <Task key= {task.id} task={task} updateTask={this.updateTask.bind(this)} />
+            )
+        })
+      )
+    }
+
+    render(){
+      return (
+        <View style={ styles.container }>
+          <TaskHeader toBeCompleted={this.calculateTaskToBeCompleted()}/>
+          <ScrollView style={ styles.tasksContainer }>{this.renderTask()}</ScrollView>
+          <TouchableHighlight style={styles.addTaskbutton} onPress ={()=>{this.showModal()}}>
+            <Image style={styles.plusIcon} source={require('./../images/icon-plus.png')}/>
+          </TouchableHighlight>
+          <Modal
+          animationType="slide"
+          transparent={true}
+          onRequestClose={()=>{this.hideModal()}}
+          visible={this.state.visibleModal}>
+            <AddTaskModal
+              addTask={this.addTask.bind(this)}
+              hideModal={this.hideModal.bind(this)}/>
+          </Modal>
+        </View>
+      )
+    }
+
   }
-});
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1
+    },
+    tasksContainer: {
+      backgroundColor: 'white',
+      flex: 1
+    },
+    addTaskbutton:{
+      backgroundColor: '#ED184A',
+      width:66,
+      height:66,
+      borderRadius:33,
+      position: 'absolute',
+      bottom:20,
+      right:15,
+      alignItems:'center',
+      justifyContent:'center'
+    },
+    plusIcon:{
+      width:30,
+      height:30
+    }
+
+  });

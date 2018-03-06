@@ -1,71 +1,59 @@
-import React, {Component} from 'react';
+
+import React , {Component} from 'react';
 import {
   View,
-  Text,
   Image,
-  StyleSheet
+  Text,
+  StyleSheet,
+  TouchableHighlight
 } from 'react-native';
 
-export default class Tareas extends Component{
+
+export default class Tareas extends Component<props>{
 
   constructor(props){
-    super(props);
+      super(props);
+    }
 
-    this.state = {
-      tasks: [
-        { id: 1, title: 'Comprar Leche', completed: false },
-        { id: 2, title: 'Sacar la basura', completed: false },
-        { id: 3, title: 'Lava los platos', completed: false },
-        { id: 4, title: 'Organizar la peda', completed: false },
-        { id: 5, title: 'Soportar la cruda', completed: false },
-        { id: 6, title: 'Netflix and Chill', completed: false }
-      ]
+    render(){
+      const {title,completed,id}=this.props.task;
+      const icon = completed ? require('./../images/icon-checked.png') : require('./../images/icon-circle.png');
+
+      return(
+        <TouchableHighlight onPress={ ()=>{ this.props.updateTask(id)}} style={styles.container}>
+          <View style={styles.taskContainer}>
+              <Image style={styles.taskIcon} source={icon}/>
+              <Text style={completed ? styles.taskTextCompleted : styles.taskText}>{title}</Text>
+          </View>
+        </TouchableHighlight>
+      )
     }
   }
-  renderTasks(){
-    return(
-      this.state.tasks.map((task)=>{
-        return(
-          <View key={task.id} style={styles.taskContainer}>
-          <Image style={styles.taskIcon} source={require('./../images/icon-circle.png')}/>
-          <Text style={styles.taskText}>{task.title}</Text>
-          </View>
-        )
-      })
-    )
-  }
 
-  render(){
-    return(
-      <View style={styles.tasksContainer}>
-      {this.renderTasks()}
-      </View>
-    )
-  }
-
-}
-
-const styles = StyleSheet.create({
-  tasksContainer: {
-    backgroundColor: 'green',
-    flex: 1
-  },
-  taskContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderStyle: 'solid',
-    borderBottomWidth: 2,
-    borderColor: '#E7E7E7'
-  },
-  taskIcon: {
-    width: 25,
-    height: 25,
-    marginRight: 15
-  },
-  taskText: {
-    fontSize: 21,
-  }
-});
+  const styles = StyleSheet.create({
+    container:{
+      height:60
+    },
+    taskIcon: {
+      height: 25,
+      width: 25,
+      marginRight: 15
+    },
+    taskText: {
+      fontSize: 21
+    },
+    taskTextCompleted:{
+      fontSize:21,
+      color: '#A4A4A4'
+    },
+    taskContainer: {
+      flex: 1,
+      backgroundColor: 'white',
+      alignItems: 'center',
+      flexDirection: 'row',
+      padding: 10,
+      borderStyle: 'solid',
+      borderBottomWidth: 2,
+      borderColor: '#E7E7E7'
+    }
+  });

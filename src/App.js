@@ -12,6 +12,8 @@ import {
 import { StackNavigator } from 'react-navigation';
 import IntroScreen from './screens/IntroScreen';
 import TasksScreen from './screens/TasksScreen';
+import AddTaskModal from './modals/AddTaskModal';
+
 
 //Or Export this...
 const ScreenStack = StackNavigator(
